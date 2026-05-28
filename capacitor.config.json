@@ -1,0 +1,14 @@
+{
+  "appId": "com.myapp.datasearch",
+  "appName": "√Î≤È",
+  "webDir": ".",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "CapawesomeFilePicker": {
+      "types": ["*/*"]
+    }
+  }
+}
