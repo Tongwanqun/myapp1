@@ -32,10 +32,10 @@ jobs:
 
       - name: Build Android APK
         run: |
-          npx cap init 秒查 com.myapp.datasearch --web-dir=.
-          npx cap add android
-          npx cap copy
-          npx cap sync
+          cap init 秒查 com.myapp.datasearch --web-dir=.
+          cap add android
+          cap copy
+          cap sync
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
