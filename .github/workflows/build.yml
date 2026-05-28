@@ -1,4 +1,5 @@
-echo 'name: Build Android APK
+ï»¿cat > .github/workflows/build.yml << 'EOF'
+name: Build Android APK
 
 on:
   push:
@@ -8,7 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,15 +22,15 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
-          java-version: "17"
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Install dependencies
         run: npm install
 
       - name: Build Android APK
         run: |
-          npx cap init Ãë²é com.myapp.datasearch --web-dir=.
+          npx cap init ç§’æŸ¥ com.myapp.datasearch --web-dir=.
           npx cap add android
           npx cap copy
           npx cap sync
@@ -41,4 +42,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk' > build.yml
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+EOF
