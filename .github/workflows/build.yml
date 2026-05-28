@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install Capacitor CLI globally
+        run: npm install -g @capacitor/cli
+
       - name: Build Android APK
         run: |
           npx cap init 秒查 com.myapp.datasearch --web-dir=.
