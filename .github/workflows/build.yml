@@ -1,44 +1,51 @@
-名称：构建安卓 APK
+name: Build Android APK
 
-在:
-  推:
-    分支：[ 主 ]
-  工作流触发:
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
-工作:
-  构建:
-    运行于：ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-    步骤:
-      - 名称: 结账代码
-        使用： actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - 名称上传 APK
-        使用：actions/setup-node@v4
-        与：
-          节点版本：20
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
 
-      - 名称: 设置Java
-        使用： actions/setup-java@v4
-        与：
-          分布：'temurin'
-          java-version：'17'
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
 
-      - 名称: 安装依赖项
-        运行：npm install
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-      - 名称: 构建安卓APK
-        运行： |
-          npx cap init 秒查 com.myapp.datasearch --web-dir=.
-          npx cap add android
-          npx cap copy
-          npx cap sync
-          cd 安卓
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install @capacitor/cli @capacitor/android --save-dev
+
+      - name: Build Android APK
+        run: |
+          npx cap sync android
+          cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --stacktrace
 
-      - 名称: 上传 APK
-
-
-
-          路径：android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
