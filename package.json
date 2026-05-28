@@ -1,7 +1,7 @@
-{
+ï»¿{
   "name": "myapp",
   "version": "1.0.0",
-  "description": "Êı¾İ¿ìËÑ",
+  "description": "æ•°æ®å¿«æœ",
   "main": "index.html",
   "dependencies": {
     "@capacitor/android": "5.7.0",
