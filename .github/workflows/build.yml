@@ -17,32 +17,27 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'gradle'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses
-
-      - name: Install dependencies
+      - name: Generate package-lock.json
         run: |
+          npm init -y
           npm install
-          npm install @capacitor/cli @capacitor/android --save-dev
 
       - name: Build Android APK
         run: |
-          npx cap sync android
+          npx cap init 秒查 com.myapp.datasearch --web-dir=.
+          npx cap add android
+          npx cap copy
+          npx cap sync
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
