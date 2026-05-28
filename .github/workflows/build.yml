@@ -1,46 +1,44 @@
-﻿cat > .github/workflows/build.yml << 'EOF'
-name: Build Android APK
+名称：构建安卓 APK
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+在:
+  推:
+    分支：[ 主 ]
+  工作流触发:
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+工作:
+  构建:
+    运行于：ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    步骤:
+      - 名称: 结账代码
+        使用： actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+      - 名称上传 APK
+        使用：actions/setup-node@v4
+        与：
+          节点版本：20
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+      - 名称: 设置Java
+        使用： actions/setup-java@v4
+        与：
+          分布：'temurin'
+          java-version：'17'
 
-      - name: Install dependencies
-        run: npm install
+      - 名称: 安装依赖项
+        运行：npm install
 
-      - name: Build Android APK
-        run: |
+      - 名称: 构建安卓APK
+        运行： |
           npx cap init 秒查 com.myapp.datasearch --web-dir=.
           npx cap add android
           npx cap copy
           npx cap sync
-          cd android
+          cd 安卓
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-EOF
+      - 名称: 上传 APK
+
+
+
+          路径：android/app/build/outputs/apk/debug/app-debug.apk
