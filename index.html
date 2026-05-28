@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1e88e5">
+    <title>数据快搜</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container" id="listView">
+        <h2>📊 我的表格</h2>
+        <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <button id="darkModeBtn" class="btn-secondary" style="flex:1;">🌓 深色</button>
+            <button id="exportBackupBtn" class="btn-warning" style="flex:1;">📤 导出备份</button>
+            <button id="importBackupBtn" class="btn-primary" style="flex:1;">📂 导入备份</button>
+        </div>
+        <input type="text" id="tableSearchInput" class="search-input" placeholder="🔍 搜索表格名称...">
+        <div class="loading" id="loadingTip">正在导入文件，请稍候...</div>
+        <button id="importBtn" class="btn-primary">+ 导入新表格（支持多子表）</button>
+        <p class="tip">提示：导入Excel后可查看和编辑数据</p>
+        <div id="tableList"></div>
+    </div>
+
+    <div class="container" id="detailView" style="display:none;">
+        <!-- 顶部栏：表格名称（可点击切换）+ 重命名按钮 -->
+        <div class="top-bar">
+            <div class="table-title-container">
+                <div class="table-title" id="currentTableTitle">加载中...</div>
+                <div class="table-dropdown" id="tableDropdown"></div>
+            </div>
+            <button id="renameTableBtn" class="rename-btn">✏️ 重命名</button>
+        </div>
+
+        <div class="search-col-row">
+            <input type="text" id="globalSearchInput" class="search-input" placeholder="🔍 搜索筛选结果...">
+            <button id="selectSheetBtn" class="select-sheet-btn">📑 子表</button>
+            <button id="selectColBtn" class="select-col-btn">📋 选择列</button>
+        </div>
+
+        <div class="filter-row">
+            <button id="filter1Btn" class="filter-item">
+                <span class="filter-label" id="labelLevel1">第一列</span>
+                <span class="filter-value" id="selected1Display">全部</span>
+            </button>
+            <button id="filter2Btn" class="filter-item">
+                <span class="filter-label" id="labelLevel2">第二列</span>
+                <span class="filter-value" id="selected2Display">全部</span>
+            </button>
+            <button id="backToListBtn" class="back-btn">← 返回</button>
+        </div>
+
+        <div class="result-card">
+            <div class="result-header">
+                <span>📋 筛选结果</span>
+                <button id="clearFilterBtn" class="clear-btn">清空</button>
+            </div>
+            <div id="resultArea" class="result-area"></div>
+            <div id="statTip" class="stat-tip"></div>
+        </div>
+
+        <div class="btn-row">
+            <button id="copyResultBtn" class="btn-primary">📋 复制结果</button>
+            <button id="exportExcelBtn" class="btn-warning">📤 导出Excel</button>
+        </div>
+
+        <div id="rowEditButtons" class="edit-buttons">
+            <button id="deleteRowBtn" class="btn-danger">🗑 删除此行</button>
+            <button id="addRowBtn" class="btn-primary">➕ 新增一行</button>
+            <button id="undoBtn" class="btn-secondary">↩️ 撤销</button>
+        </div>
+    </div>
+
+    <!-- 筛选弹窗 -->
+    <div id="filterModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header" id="filterModalTitle">选择筛选项</div>
+            <div class="modal-body" id="filterModalBody"></div>
+            <div class="modal-footer">
+                <button id="filterModalCancel" class="btn-secondary">取消</button>
+                <button id="filterModalSelectAll" class="btn-warning">全选</button>
+                <button id="filterModalConfirm" class="btn-primary">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 列选择弹窗 -->
+    <div id="colModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">📋 选择显示的列</div>
+            <div class="modal-body" id="colModalBody"></div>
+            <div class="modal-footer">
+                <button id="colModalCancel" class="btn-secondary">取消</button>
+                <button id="colModalSelectAll" class="btn-warning">全选</button>
+                <button id="colModalConfirm" class="btn-primary">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 子表选择弹窗 -->
+    <div id="sheetSelectModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">📑 选择子表</div>
+            <div class="modal-body" id="sheetSelectBody"></div>
+            <div class="modal-footer">
+                <button id="sheetModalCancel" class="btn-secondary">取消</button>
+                <button id="sheetModalSelectAll" class="btn-warning">全选</button>
+                <button id="sheetModalClearAll" class="btn-secondary">取消全选</button>
+                <button id="sheetModalConfirm" class="btn-primary">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+    <input type="file" id="backupFileInput" accept=".json" style="display:none;">
+
+    <script src="lib/dexie.js"></script>
+    <script src="lib/xlsx.full.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/filter-engine.js"></script>
+    <script src="js/search-engine.js"></script>
+    <script src="js/edit-engine.js"></script>
+    <script src="js/table-render.js"></script>
+    <script src="js/file-manager.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
